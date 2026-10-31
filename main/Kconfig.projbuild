@@ -1238,3 +1238,17 @@ menu "TAIJIPAI_S3_CONFIG"
 endmenu
 
 endmenu
+
+menu "CASTING_CONFIG"
+    config CASTING_URL
+        string "Local casting service URL"
+        default ""
+        help
+            Base URL of the casting service running on the site LAN, for
+            example http://192.168.1.20:8091. Leave empty to build a firmware
+            without the self.cast.* tools.
+
+            The service has no authentication and must stay on a trusted
+            network. The value can be overridden at runtime from the NVS
+            namespace "casting", key "url".
+endmenu

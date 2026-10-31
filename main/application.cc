@@ -4,6 +4,7 @@
 #include "audio_codec.h"
 #include "board.h"
 #include "cjson_utils.h"
+#include "casting/cast_tools.h"
 #include "display.h"
 #include "mcp_server.h"
 #include "mqtt_protocol.h"
@@ -110,6 +111,9 @@ void Application::Initialize() {
     auto& mcp_server = McpServer::GetInstance();
     mcp_server.AddCommonTools();
     mcp_server.AddUserOnlyTools();
+    // Casting tools are board independent: the device finds the screens on its
+    // own network and plays whatever stream URL the control plane hands over.
+    CastTools::GetInstance().Initialize();
     // Registration is complete here, so this is the only place the whole inventory exists.
     // It is logged because a server that accepts a bounded number of tools drops the rest
     // quietly: the only sign on this device was an alert at boot and a sad face, which is
