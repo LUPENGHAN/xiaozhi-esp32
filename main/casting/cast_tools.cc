@@ -262,6 +262,23 @@ std::expected<CastTools::Target, std::string> CastTools::Resolve(
     if (cached != targets_.end()) {
         return cached->second;
     }
+    // The model often repeats the name it just heard instead of the id that
+    // list_screens returned. A unique cached name is enough to cast.
+    const Target* named = nullptr;
+    int name_hits = 0;
+    for (const auto& entry : targets_) {
+        if (entry.second.name != target_id) {
+            continue;
+        }
+        named = &entry.second;
+        ++name_hits;
+    }
+    if (name_hits == 1 && named != nullptr && !named->endpoint_id.empty()) {
+        return *named;
+    }
+    if (name_hits > 1) {
+        return std::unexpected("附近有好几块叫这个名字的电视，先调用 self.cast.list_screens 确认是哪一块");
+    }
     // The model may cast without listing first, or the cache may be stale.
     CastReply reply = client_.GetTarget(target_id);
     if (!reply.ok) {
